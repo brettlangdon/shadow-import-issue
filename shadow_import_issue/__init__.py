@@ -1,7 +1,3 @@
-from .sub import child  # isort:skip
+import shadow_import_issue.sub.child  # isort:skip
 
-print("pure-python", child.VAR)
-
-from .c_exts import _child  # isort:skip
-
-print("cython", _child.VAR)
+import shadow_import_issue.c_exts._child  # isort:skip

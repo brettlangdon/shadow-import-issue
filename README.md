@@ -36,15 +36,26 @@ docker run --rm shadow-import-issue
 Expected output is to fail with:
 
 ```
-pure-python VAR
+<module 'shadow_import_issue.shadow' from '/src/shadow_import_issue/shadow.py'>
+VAR
+<module 'shadow_import_issue.c_exts.shadow_import_issue.shadow' from '/src/shadow_import_issue/c_exts/shadow.py'>
 Traceback (most recent call last):
   File "/src/test.py", line 1, in <module>
     import shadow_import_issue
-  File "/src/shadow_import_issue/__init__.py", line 5, in <module>
-    from .c_exts import _child  # isort:skip
-  File "shadow_import_issue/c_exts/_child.pyx", line 1, in init shadow_import_issue.c_exts._child
-    from shadow_import_issue.shadow import VAR
-ImportError: cannot import name VAR
+  File "/src/shadow_import_issue/__init__.py", line 3, in <module>
+    import shadow_import_issue.c_exts._child  # isort:skip
+  File "shadow_import_issue/c_exts/_child.pyx", line 4, in init shadow_import_issue.c_exts._child
+    print(shadow_import_issue.shadow.VAR)
+AttributeError: module 'shadow_import_issue.c_exts.shadow_import_issue.shadow' has no attribute 'VAR'
 ```
 
 The module and variable will import fine with Python, but will fail the import from the Cython module.
+
+
+## Analysis
+
+- This only happens with editable install
+- This only occurs with `setuptools>=64.0.0`
+   - `setuptools>=64.0.0` changed from using `.egg-link` to `.pth` + editable loader
+- The module loaded by Cython has the name `shadow_import_issue.c_exts.shadow_import_issue.shadow` and is loaded from `shadow_import_issue/c_exts/shadow.py`
+- The issue does not happen with `Cython==3.0.0a11`
