@@ -59,5 +59,6 @@ The module and variable will import fine with Python, but will fail the import f
    - `setuptools>=64.0.0` changed from using `.egg-link` to `.pth` + editable loader
 - The module loaded by Cython has the name `shadow_import_issue.c_exts.shadow_import_issue.shadow` and is loaded from `shadow_import_issue/c_exts/shadow.py`
 - The issue does not happen with `Cython==3.0.0a11`
+   - [diff of ImportExport.c](https://github.com/cython/cython/compare/0.29.32...3.0.0a11#diff-418ca9b05a1b71d650824f1f51f3213aba1b4139031df74811dee0af0802dba1)
 - Changing to a relative import resolves the issue
    - `from .. import shadow` will load the correct module
